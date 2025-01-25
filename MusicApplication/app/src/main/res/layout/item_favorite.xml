@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <!-- Thumbnail pesme -->
+    <ImageView
+        android:id="@+id/favoriteThumbnail"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginEnd="8dp"
+        android:contentDescription="thumbnail"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <!-- Naslov pesme -->
+    <TextView
+        android:id="@+id/favoriteTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="Song Title"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/favoriteThumbnail"
+        app:layout_constraintEnd_toStartOf="@id/removeFavoriteButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <!-- Dugme za uklanjanje iz favorita -->
+    <ImageButton
+        android:id="@+id/removeFavoriteButton"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="@null"
+        android:contentDescription="remove_favorite"
+        android:src="@drawable/placeholder_image"
+        app:tint="@android:color/holo_red_dark"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
