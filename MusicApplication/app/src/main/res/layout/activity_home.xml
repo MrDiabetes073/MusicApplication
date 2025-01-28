@@ -3,40 +3,75 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#1C232B"> <!-- Pozadina ekrana -->
 
-    <EditText
-        android:id="@+id/searchBar"
+    <!-- LinearLayout za EditText i dugme za pretragu -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Search music" />
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="#2E343B"> <!-- Tamna pozadina za pretragu -->
 
-    <Button
-        android:id="@+id/btnFavorites"
-        android:layout_width="110dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="16dp"
-        android:text="Favorites"
-        android:textColor="@color/white" />
+        <!-- EditText za unos pretrage -->
+        <EditText
+            android:id="@+id/searchBar"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="#2E343B"
+            android:hint="Search music"
+            android:textColor="#FFFFFF" />
 
-    <Button
-        android:id="@+id/searchButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Search" />
+        <!-- Dugme za pretragu (ikona) -->
+        <ImageButton
+            android:id="@+id/searchButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_search"
+            android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="Search"
+            android:scaleType="centerInside"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <!-- RecyclerView sa svim itemima -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="16dp"
+        android:scrollbars="vertical" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="16dp"
-            android:scrollbars="vertical" />
+    <!-- LinearLayout za ikonu favorita i tekst -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:background="#2E343B"> <!-- Tamna pozadina za dugme i tekst -->
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Ikona favorita -->
+        <ImageButton
+            android:id="@+id/btnFavorites"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_favoritee"
+            android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="Favorites"
+            android:layout_marginEnd="8dp"
+            android:scaleType="centerInside" />
+
+        <!-- Natpis pored ikone -->
+        <TextView
+            android:id="@+id/favoritesText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4---Favorites Playlist"
+            android:textColor="#1DB954"
+            android:textSize="16sp" />
+    </LinearLayout>
 </LinearLayout>

@@ -3,15 +3,41 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="#1C232B"
 
+    android:gravity="center">
+
+    <!-- Logo sekcija -->
+    <ImageView
+        android:id="@+id/logoImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="241dp"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/ic_logo" />
+
+    <!-- Pozdravni tekst -->
+    <TextView
+        android:id="@+id/welcomeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Welcome to Music Player"
+        android:textColor="#E0E0E0"
+        android:textSize="18sp"
+        android:layout_marginTop="16dp"
+        android:gravity="center"/>
+
+    <!-- Unos podataka -->
     <EditText
         android:id="@+id/emailEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Email"
         android:inputType="textEmailAddress"
-        android:padding="12dp" />
+        android:padding="12dp"
+        android:textColor="#E0E0E0"
+        android:background="#333333"
+        android:layout_marginTop="24dp" />
 
     <EditText
         android:id="@+id/passwordEditText"
@@ -19,22 +45,38 @@
         android:layout_height="wrap_content"
         android:hint="Password"
         android:inputType="textPassword"
-        android:padding="12dp" />
+        android:padding="12dp"
+        android:textColor="#E0E0E0"
+        android:background="#333333"
+        android:layout_marginTop="16dp" />
 
+    <!-- Dugme za login -->
     <Button
         android:id="@+id/loginButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Login"
-        android:layout_marginTop="16dp" />
+        android:textColor="#1DB954"
+        android:background="@android:color/transparent"
+        android:layout_marginTop="8dp"
+        android:padding="12dp"
+        android:layout_gravity="center"
+        android:elevation="4dp" />
 
+    <!-- Dugme za registraciju -->
     <Button
         android:id="@+id/signupButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Sign Up"
-        android:layout_marginTop="8dp" />
+        android:textColor="#1DB954"
+        android:background="@android:color/transparent"
+        android:layout_marginTop="8dp"
+        android:padding="12dp"
+        android:layout_gravity="center"
+        android:elevation="4dp" />
 
+    <!-- Progress bar -->
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"

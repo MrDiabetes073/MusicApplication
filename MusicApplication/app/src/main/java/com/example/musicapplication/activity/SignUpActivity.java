@@ -15,6 +15,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.musicapplication.R;
+import com.example.musicapplication.database.FirebaseHelper;
+import com.example.musicapplication.models.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -32,7 +34,6 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        nameEditText = findViewById(R.id.nameEditText);
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
         confirmPasswordEditText = findViewById(R.id.confirmPasswordEditText);
@@ -44,36 +45,32 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void registerUser() {
-        String name = nameEditText.getText().toString();
-        String email = emailEditText.getText().toString();
-        String password = passwordEditText.getText().toString();
-        String confirmPassword = confirmPasswordEditText.getText().toString();
+        String email = emailEditText.getText().toString().trim();
+        String password = passwordEditText.getText().toString().trim();
+        String confirmPassword = confirmPasswordEditText.getText().toString().trim();
+
+        if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+            Toast.makeText(SignUpActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         if (password.equals(confirmPassword)) {
             FirebaseAuth auth = FirebaseAuth.getInstance();
             auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, task -> {
                         if (task.isSuccessful()) {
-                            // Spasi korisničke podatke u Firestore
-                            FirebaseFirestore db = FirebaseFirestore.getInstance();
-                            String userId = auth.getCurrentUser().getUid();
-                            Map<String, Object> user = new HashMap<>();
-                            user.put("name", name);
-                            user.put("email", email);
+                            // Kreiranje korisnika i čuvanje u Firebase
+                            User newUser = new User(email, password); // Koristi model User
+                            FirebaseHelper firebaseHelper = new FirebaseHelper();
+                            firebaseHelper.saveUser(newUser);
 
-                            db.collection("users").document(userId).set(user)
-                                    .addOnSuccessListener(aVoid -> {
-                                        Toast.makeText(SignUpActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
-                                        startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
-                                        finish();
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Toast.makeText(SignUpActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
-                                        startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
-                                        finish();
-                                         });
+                            // Uspešna registracija
+                            Toast.makeText(SignUpActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
+                            finish();
                         } else {
-                            Toast.makeText(SignUpActivity.this, "Registration failed", Toast.LENGTH_SHORT).show();
+                            // Neuspešna registracija
+                            Toast.makeText(SignUpActivity.this, "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
         } else {

@@ -4,7 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:gravity="center_vertical"
+    android:background="#1C232B">
 
     <!-- Prikaz naslova pesme -->
     <TextView
@@ -15,17 +17,16 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:gravity="center"
-        android:paddingBottom="8dp"
+        android:paddingBottom="16dp"
         android:ellipsize="end"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:textColor="#1DB954" />
 
-    <!-- YouTube plejer (ograničen na manji deo ekrana) -->
+    <!-- YouTube plejer -->
     <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
         android:id="@+id/youtube_player_view"
         android:layout_width="match_parent"
-        android:layout_height="200dp" >
-
-    </com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView>
+        android:layout_height="250dp" />
 
     <!-- Kontrole za reprodukciju -->
     <LinearLayout
@@ -35,33 +36,47 @@
         android:gravity="center"
         android:layout_marginTop="16dp">
 
-        <Button
+        <!-- Dugme za prethodnu pesmu -->
+        <ImageButton
             android:id="@+id/btn_previous"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_previous"
-            android:text="Prethodna" />
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_previous"
+            android:scaleType="centerInside"
+            android:contentDescription="Previous Song"
+            android:background="?android:attr/selectableItemBackgroundBorderless" />
 
-        <Button
+        <!-- Dugme za pauzu/igru -->
+        <ImageButton
             android:id="@+id/btn_play_pause"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Pauza"
-            android:layout_marginHorizontal="16dp" />
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_play"
+            android:scaleType="centerInside"
+            android:contentDescription="Play/Pause"
+            android:layout_marginHorizontal="16dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless" />
 
-        <Button
+        <!-- Dugme za sledeću pesmu -->
+        <ImageButton
             android:id="@+id/btn_next"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sledeća" />
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_next"
+            android:scaleType="centerInside"
+            android:contentDescription="Next Song"
+            android:background="?android:attr/selectableItemBackgroundBorderless" />
 
     </LinearLayout>
 
-    <Button
+    <!-- Dugme za dodavanje u favorite -->
+    <ImageButton
         android:id="@+id/button_favorite"
-        android:layout_width="140dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Add to Favorites" />
-
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/ic_favorite"
+        android:scaleType="centerInside"
+        android:contentDescription="Add to Favorites"
+        android:layout_marginTop="16dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless" />
 </LinearLayout>

@@ -1,6 +1,7 @@
 package com.example.musicapplication.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         Song song = songs.get(position);
 
         holder.songTitle.setText(song.getTitle());
+        holder.songTitle.setTextColor(Color.parseColor("#1DB954"));
+
 
         // Prikaz sličice pomoću Glide biblioteke
         Glide.with(context)

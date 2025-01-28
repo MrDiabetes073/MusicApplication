@@ -9,10 +9,12 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.musicapplication.R;
+import com.example.musicapplication.models.User;
+import com.example.musicapplication.utils.SessionManager;
+import com.example.musicapplication.database.FirebaseHelper;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity {
@@ -21,6 +23,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button loginButton, signupButton;
     private ProgressBar progressBar;
     private FirebaseAuth firebaseAuth;
+    private FirebaseHelper firebaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +37,9 @@ public class LoginActivity extends AppCompatActivity {
         signupButton = findViewById(R.id.signupButton);
         progressBar = findViewById(R.id.progressBar);
 
-        // Inicijalizacija FirebaseAuth
+        // Inicijalizacija FirebaseAuth i FirebaseHelper
         firebaseAuth = FirebaseAuth.getInstance();
+        firebaseHelper = new FirebaseHelper();
 
         // Login dugme
         loginButton.setOnClickListener(v -> loginUser());
@@ -82,7 +86,26 @@ public class LoginActivity extends AppCompatActivity {
 
                     if (task.isSuccessful()) {
                         Log.d("LoginDebug", "Login successful for email: " + email);
-                        Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+
+                        // Pre nego što pokreneš HomeActivity, postavi korisnika u SessionManager
+                        User user = new User(email, ""); // Kreiranje korisnika sa emailom
+                        SessionManager.setCurrentUser(user); // Postavljanje korisnika u SessionManager
+
+                        // Pozivaj fetchUser metodu da učitaš korisnika iz Firebase-a
+                        firebaseHelper.fetchUser(email, new FirebaseHelper.FirebaseUserCallback() {
+                            @Override
+                            public void onUserFetched(User fetchedUser) {
+                                // Ako su podaci preuzeti uspešno, ažuriraj korisnika u SessionManager
+                                SessionManager.setCurrentUser(fetchedUser);
+                                Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onError(String errorMessage) {
+                                // Prikaži grešku ako se desi problem pri preuzimanju podataka
+                                Toast.makeText(LoginActivity.this, "Error: " + errorMessage, Toast.LENGTH_SHORT).show();
+                            }
+                        });
 
                         // Idi na HomeActivity
                         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
