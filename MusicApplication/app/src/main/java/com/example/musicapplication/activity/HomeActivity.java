@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,8 +44,8 @@ public class HomeActivity extends AppCompatActivity {
 
         // Initialize Search Bar and Button
         EditText searchBar = findViewById(R.id.searchBar);
-        Button searchButton = findViewById(R.id.searchButton);
-        Button btnFavorites = findViewById(R.id.btnFavorites);
+        ImageButton searchButton = findViewById(R.id.searchButton);
+        ImageButton btnFavorites = findViewById(R.id.btnFavorites);
 
         // Search Button Click Action
         searchButton.setOnClickListener(v -> {
@@ -128,6 +129,8 @@ public class HomeActivity extends AppCompatActivity {
             Intent intent = new Intent(this, PlayerActivity.class);
             intent.putExtra("videoId", song.getVideoId()); // Prosledi ID videa
             intent.putExtra("songTitle", song.getTitle());   // Prosledi naslov pesme
+            intent.putExtra("thumbnailUrl", song.getThumbnailUrl());
+
             startActivity(intent);
         } else {
             Toast.makeText(this, "Invalid video ID.", Toast.LENGTH_SHORT).show();

@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -12,6 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.musicapplication.R;
 import com.example.musicapplication.database.FavoritesDatabaseHelper;
+import com.example.musicapplication.models.Song;
+import com.example.musicapplication.models.User;
+import com.example.musicapplication.utils.SessionManager;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
@@ -22,11 +26,12 @@ public class PlayerActivity extends AppCompatActivity {
     private YouTubePlayerView youtubePlayerView;
     private YouTubePlayer youtubePlayer;
     private TextView tvSongTitle;
-    private Button btnPlayPause, btnPrevious, btnNext, btnFavorite;
+    private ImageButton btnPlayPause, btnPrevious, btnNext, btnFavorite;
     private boolean isPlaying = true; // Za praćenje stanja reprodukcije
 
     private String videoId; // Video ID koji se prenosi iz HomeActivity
     private String songTitle; // Naslov pesme
+    private String thumbnailUrl;
     private FavoritesDatabaseHelper dbHelper; // Pomoćna klasa za rad sa bazom
 
     @Override
@@ -37,17 +42,16 @@ public class PlayerActivity extends AppCompatActivity {
         // Dobijanje prosleđenih podataka
         videoId = getIntent().getStringExtra("videoId");
         songTitle = getIntent().getStringExtra("songTitle");
+        thumbnailUrl = getIntent().getStringExtra("thumbnailUrl");
 
         // Provera validnosti dobijenih podataka
-        if (videoId == null || videoId.isEmpty()) {
-            Toast.makeText(this, "Greška: Video ID nije prosleđen ili je prazan.", Toast.LENGTH_SHORT).show();
-            finish(); // Zatvaramo aktivnost ako nema validnog video ID-a
-            return;
-        }
+        if (videoId == null || videoId.isEmpty() ||
+                songTitle == null || songTitle.isEmpty()
+        ) {
 
-        if (songTitle == null || songTitle.isEmpty()) {
-            Toast.makeText(this, "Greška: Naslov pesme nije prosleđen ili je prazan.", Toast.LENGTH_SHORT).show();
-            songTitle = "Nepoznata pesma"; // Default vrednost ako naslov nedostaje
+            Toast.makeText(this, "Greška: Podaci o pesmi nisu ispravni.", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
         }
 
         // Ostatak koda za inicijalizaciju
@@ -69,13 +73,8 @@ public class PlayerActivity extends AppCompatActivity {
 
         // Postavljanje listenera za dugmad
         btnPlayPause.setOnClickListener(v -> togglePlayPause());
-        btnPrevious.setOnClickListener(v -> {
-            Toast.makeText(this, "PesmaNAZAD", Toast.LENGTH_SHORT).show();
-        });
-        btnNext.setOnClickListener(v -> {
-            Toast.makeText(this, "PesmaNAPRED", Toast.LENGTH_SHORT).show();
-        });
-
+        btnPrevious.setOnClickListener(v -> playPreviousSong());
+        btnNext.setOnClickListener(v -> playNextSong());
         btnFavorite.setOnClickListener(v -> addSongToFavorites());
     }
 
@@ -93,24 +92,36 @@ public class PlayerActivity extends AppCompatActivity {
                 }
             }
 
-
             public void onError(@NonNull YouTubePlayer youTubePlayer, @NonNull String error) {
                 Toast.makeText(PlayerActivity.this, "Greška pri učitavanju plejera: " + error, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+
     private void togglePlayPause() {
         if (youtubePlayer != null) {
             if (isPlaying) {
                 youtubePlayer.pause();
-                btnPlayPause.setText("Pusti");
+                // Promeni ikonu na 'play' kada se pauzira pesma
+                btnPlayPause.setImageResource(R.drawable.ic_play);
             } else {
                 youtubePlayer.play();
-                btnPlayPause.setText("Pauza");
+                // Promeni ikonu na 'pause' kada se pesma pušta
+                btnPlayPause.setImageResource(R.drawable.ic_pause);
             }
             isPlaying = !isPlaying;
         }
+    }
+
+    private void playPreviousSong() {
+        // Ovdje možete implementirati logiku za prethodnu pesmu
+        Toast.makeText(this, "PesmaNAZAD", Toast.LENGTH_SHORT).show();
+    }
+
+    private void playNextSong() {
+        // Ovdje možete implementirati logiku za sledeću pesmu
+        Toast.makeText(this, "PesmaNAPRED", Toast.LENGTH_SHORT).show();
     }
 
     private void addSongToFavorites() {
@@ -119,16 +130,37 @@ public class PlayerActivity extends AppCompatActivity {
             return;
         }
 
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("title", songTitle);
-        values.put("video_id", videoId);
+        // Dohvati trenutnog korisnika
+        User currentUser = SessionManager.getCurrentUser(); // Pretpostavka: UserManager upravlja trenutnim korisnikom
+        if (currentUser == null) {
+            Toast.makeText(this, "Korisnik nije prijavljen.", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        long result = db.insert("favorites", null, values);
-        if (result != -1) {
+        // Dodaj pesmu u listu favorita korisnika
+        Song favoriteSong = new Song(songTitle, videoId, thumbnailUrl); // Pretpostavka: Postoji klasa Song
+        boolean isAdded = currentUser.addFavoriteSong(favoriteSong); // Pretpostavka: Metoda za dodavanje u listu favorita
+
+        if (isAdded) {
             Toast.makeText(this, "Pesma dodata u favorite!", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Greška pri dodavanju pesme u favorite.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Pesma je već u favoritima.", Toast.LENGTH_SHORT).show();
+        }
+
+        // Opcionalno: Sačuvaj ažurirane favorite korisnika u lokalnu bazu
+        saveFavoritesToDatabase(currentUser);
+    }
+
+    private void saveFavoritesToDatabase(User user) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.delete("favorites", null, null); // Očisti prethodne favorite korisnika
+
+        for (Song song : user.getFavoriteSongs()) {
+            ContentValues values = new ContentValues();
+            values.put("title", song.getTitle());
+            values.put("video_id", song.getVideoId());
+            values.put("thumbnail_url", song.getThumbnailUrl());
+            db.insert("favorites", null, values);
         }
 
         db.close();
